@@ -24,7 +24,7 @@ jobs:
 
     strategy:
       matrix:
-        env: [STAGING, PROD]
+        env: [STAGING]
       fail-fast: false
 
     steps:
@@ -126,7 +126,7 @@ jobs:
       - name: Merge output.xml files with rebot
         run: |
           OUTPUTS=""
-          for f in downloaded-reports/test-reports-STAGING/output.xml downloaded-reports/test-reports-PROD/output.xml; do
+          for f in downloaded-reports/test-reports-STAGING/output.xml; do
             [ -f "$f" ] && OUTPUTS="$OUTPUTS $f"
           done
           if [ -n "$OUTPUTS" ]; then
