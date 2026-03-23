@@ -43,7 +43,7 @@ ${reset}                                    reset
 ${SELENIUM_LIBRARY}                         SeleniumLibrary
 
 # Test Contact Information
-${automation_user_contact}                  ${AUTOMATION_USER_CONTACT}
+${automation_user_contact}                  %{AUTOMATION_USER_CONTACT=demo_user}
 
 # User Preferences
 ${user_language}                            English

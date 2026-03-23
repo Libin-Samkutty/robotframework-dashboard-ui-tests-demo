@@ -3,11 +3,9 @@
 
 robotframework==7.1.1                       # Purpose: Test execution engine, reporting, and test case parsing
 robotframework-seleniumlibrary==6.1.3       # Purpose: Web UI automation via Selenium (Chrome, Firefox, Edge)
-robotframework-faker==5.2.1                 # Purpose: Generate realistic test data (names, emails, addresses)
-robotframework-imaplibrary==0.5.0           # Purpose: Email testing and inbox validation
+robotframework-faker==6.0.0                 # Purpose: Generate realistic test data (names, emails, addresses)
 robotframework-requests==0.9.7              # Purpose: REST API testing and HTTP request handling
-robotframework-pabot==2.21.0                # Purpose: Parallel test execution for faster runs
-requests-ntlm==1.2.0                        # Purpose: NTLM authentication for HTTP requests
-robotframework-jsonlibrary==0.4.2           # Purpose: JSON parsing and validation in test data
+robotframework-pabot>=2.0.0                # Purpose: Parallel test execution for faster runs
+robotframework-jsonlibrary==0.5              # Purpose: JSON parsing and validation in test data
 robotframework-csvlib==1.0.2                # Purpose: CSV file reading/writing for data-driven tests
 robotframework-datadriver==1.11.2           # Purpose: Parameterized test execution from external data files
