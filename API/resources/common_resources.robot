@@ -17,11 +17,11 @@ Resource    ../data/testdata/common_error_messages.robot
 
 Create API Session With Staging Environment
     [Documentation]    Create RequestsLibrary session for staging API
-    Create Session    ${api_session_name}    ${api_base_url_staging}    verify=True
+    Create Session    ${api_session_name}    ${api_base_url_staging}    verify=True    max_retries=0
 
 Create API Session With Production Environment
     [Documentation]    Create RequestsLibrary session for production API
-    Create Session    ${api_session_name}    ${api_base_url_prod}    verify=True
+    Create Session    ${api_session_name}    ${api_base_url_prod}    verify=True    max_retries=0
 
 Create Request Headers For API
     [Documentation]    Create standard request headers with authentication

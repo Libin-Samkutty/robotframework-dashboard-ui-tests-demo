@@ -132,6 +132,7 @@ jobs:
           done
           if [ -n "$OUTPUTS" ]; then
             rebot \
+              --nostatusrc \
               --outputdir reports/merged \
               --name "Dashboard UI Tests - All Environments" \
               $OUTPUTS
