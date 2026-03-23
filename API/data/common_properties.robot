@@ -37,5 +37,5 @@ ${not_found_404}                            404
 ${server_error_500}                         500
 
 # Environment Variables
-${ENV}                                      staging
-${COUNTRY}                                  India
+${ENV}                                      STAGING
+${COUNTRY}                                  INDIA
