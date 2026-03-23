@@ -36,10 +36,21 @@ jobs:
           python-version: '3.12'
           cache: 'pip'
 
-      - name: Install Firefox
+      - name: Install Firefox and geckodriver
         run: |
+          sudo install -d -m 0755 /etc/apt/keyrings
+          curl -fsSL https://packages.mozilla.org/apt/repo-signing-key.gpg \
+            | sudo tee /etc/apt/keyrings/packages.mozilla.org.asc > /dev/null
+          echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main" \
+            | sudo tee /etc/apt/sources.list.d/mozilla.list
+          printf 'Package: *\nPin: origin packages.mozilla.org\nPin-Priority: 1000\n' \
+            | sudo tee /etc/apt/preferences.d/mozilla
           sudo apt-get update
-          sudo apt-get install -y firefox-esr firefox-geckodriver
+          sudo apt-get install -y firefox
+          GECKO_VERSION=$(curl -sL https://api.github.com/repos/mozilla/geckodriver/releases/latest \
+            | python3 -c "import sys,json; print(json.load(sys.stdin)['tag_name'])")
+          curl -sL "https://github.com/mozilla/geckodriver/releases/download/${GECKO_VERSION}/geckodriver-${GECKO_VERSION}-linux64.tar.gz" \
+            | sudo tar -xz -C /usr/local/bin
 
       - name: Install dependencies
         run: |
