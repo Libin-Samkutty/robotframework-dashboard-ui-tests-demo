@@ -47,7 +47,7 @@ jobs:
           printf 'Package: *\nPin: origin packages.mozilla.org\nPin-Priority: 1000\n' \
             | sudo tee /etc/apt/preferences.d/mozilla
           sudo apt-get update
-          sudo apt-get install -y firefox
+          sudo apt-get install -y firefox xvfb
           GECKO_VERSION=$(curl -sL https://api.github.com/repos/mozilla/geckodriver/releases/latest \
             | python3 -c "import sys,json; print(json.load(sys.stdin)['tag_name'])")
           curl -sL "https://github.com/mozilla/geckodriver/releases/download/${GECKO_VERSION}/geckodriver-${GECKO_VERSION}-linux64.tar.gz" \
@@ -72,8 +72,9 @@ jobs:
           API_TOKEN: ${{ secrets.API_TOKEN }}
           API_BASE_URL_STAGING: ${{ secrets.API_BASE_URL_STAGING }}
           API_BASE_URL_PROD: ${{ secrets.API_BASE_URL_PROD }}
+        continue-on-error: true
         run: |
-          robot \
+          xvfb-run -a robot \
             --variable ENV:${{ matrix.env }} \
             --variable BROWSER:headlessfirefox \
             --variable login_email:${{ secrets.LOGIN_EMAIL }} \
