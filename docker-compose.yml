@@ -1,0 +1,38 @@
+# ============================================================================
+# Docker Compose Configuration for Dashboard UI Tests
+# Run tests in a containerized environment with all dependencies
+# ============================================================================
+
+version: '3.9'
+
+services:
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: dashboard-ui-tests-demo
+
+    # Load environment variables from .env file
+    env_file:
+      - .env
+
+    # Mount local reports directory for test output
+    volumes:
+      - ./reports:/app/reports
+      - ./web:/app/web:ro
+      - ./chatbot:/app/chatbot:ro
+      - ./API:/app/API:ro
+
+    # Environment variables (can override .env)
+    environment:
+      - ROBOT_LIBRARY_SCOPE=GLOBAL
+      - TZ=UTC
+
+    # Run tests on startup
+    # Override with: docker-compose run tests robot <path>
+    command: robot --outputdir reports .
+
+    # Ensure container exits after tests complete
+    stdin_open: false
+    tty: false

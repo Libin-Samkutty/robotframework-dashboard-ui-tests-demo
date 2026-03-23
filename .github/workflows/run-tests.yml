@@ -1,0 +1,134 @@
+# ============================================================================
+# GitHub Actions Workflow: Run Dashboard UI Tests
+# Triggers on push and pull requests
+# Runs tests against staging and production environments
+# ============================================================================
+
+name: Run Dashboard UI Tests
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    strategy:
+      matrix:
+        env: [STAGING, PROD]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install Firefox
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y firefox-esr firefox-geckodriver
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Create output directories
+        run: mkdir -p reports screenshots
+
+      - name: Run Robot Framework Tests (${{ matrix.env }})
+        env:
+          LOGIN_EMAIL: ${{ secrets.LOGIN_EMAIL }}
+          LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
+          BASE_URL_STAGING: ${{ secrets.BASE_URL_STAGING }}
+          BASE_URL_PROD: ${{ secrets.BASE_URL_PROD }}
+          CHATBOT_STAGING_CONTACT: ${{ secrets.CHATBOT_STAGING_CONTACT }}
+          CHATBOT_PROD_CONTACT: ${{ secrets.CHATBOT_PROD_CONTACT }}
+          API_TOKEN: ${{ secrets.API_TOKEN }}
+          API_BASE_URL_STAGING: ${{ secrets.API_BASE_URL_STAGING }}
+          API_BASE_URL_PROD: ${{ secrets.API_BASE_URL_PROD }}
+        run: |
+          robot \
+            --variable ENV:${{ matrix.env }} \
+            --outputdir reports/${{ matrix.env }} \
+            --include Smoke \
+            .
+
+      - name: Upload Test Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-${{ matrix.env }}
+          path: reports/${{ matrix.env }}/
+          retention-days: 30
+
+      - name: Publish Test Results
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Test Results - ${{ matrix.env }}
+          path: reports/${{ matrix.env }}/output.xml
+          reporter: 'java-junit'
+          fail-on-error: 'false'
+
+      - name: Comment PR with Test Results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const env = '${{ matrix.env }}';
+            const status = '${{ job.status }}';
+            const statusLabel = status === 'success' ? 'PASSED' : 'FAILED';
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `[${statusLabel}] Tests **${status}** in \`${env}\` environment`
+            });
+
+  merge-reports:
+    needs: test
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install Robot Framework
+        run: pip install robotframework
+
+      - name: Download all test artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: downloaded-reports
+
+      - name: Merge output.xml files with rebot
+        run: |
+          rebot \
+            --outputdir reports/merged \
+            --name "Dashboard UI Tests - All Environments" \
+            downloaded-reports/test-reports-STAGING/output.xml \
+            downloaded-reports/test-reports-PROD/output.xml
+
+      - name: Upload merged report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: merged-test-report
+          path: reports/merged/
+          retention-days: 30

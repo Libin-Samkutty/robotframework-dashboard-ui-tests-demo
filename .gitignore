@@ -1,0 +1,51 @@
+# Environment
+
+.env
+.env.local
+
+# Python
+
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Robot Framework outputs
+
+reports/
+output.xml
+log.html
+report.html
+xunit.xml
+*.xml
+*.html
+
+# Screenshots
+
+screenshots/
+
+# IDE
+
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# OS
+
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Cache
+
+.pytest_cache/
+.tox/
