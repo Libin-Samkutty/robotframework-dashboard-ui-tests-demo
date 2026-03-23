@@ -1,5 +1,7 @@
 # Dashboard UI Tests Demo
 
+[![CI](https://github.com/Libin-Samkutty/robotframework-dashboard-ui-tests-demo/actions/workflows/run-tests.yml/badge.svg)](https://github.com/Libin-Samkutty/robotframework-dashboard-ui-tests-demo/actions/workflows/run-tests.yml)
+
 Robot Framework test automation framework for web dashboards, chatbots, and REST APIs. Includes smoke tests, architecture patterns, Docker containerization, and GitHub Actions CI/CD.
 
 ## Contents
